@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="400" height="200">
+  <defs>
+    <!-- Main gradient for the letters -->
+    <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9A1515"/>
+      <stop offset="30%" style="stop-color:#7A0A0A"/>
+      <stop offset="70%" style="stop-color:#5A0000"/>
+      <stop offset="100%" style="stop-color:#3A0000"/>
+    </linearGradient>
+
+    <!-- Highlight gradient for inner edge -->
+    <linearGradient id="highlightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#B52525"/>
+      <stop offset="50%" style="stop-color:#8A1010"/>
+      <stop offset="100%" style="stop-color:#6A0505"/>
+    </linearGradient>
+
+    <!-- Dark edge gradient -->
+    <linearGradient id="darkEdge" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A0000"/>
+      <stop offset="100%" style="stop-color:#2A0000"/>
+    </linearGradient>
+
+    <!-- G letter mask to create the opening -->
+    <mask id="gMask">
+      <rect x="0" y="0" width="400" height="200" fill="white"/>
+      <rect x="260" y="0" width="140" height="90" fill="black"/>
+    </mask>
+  </defs>
+
+  <!-- O Letter (behind G where they overlap) -->
+  <g>
+    <!-- O outer dark edge -->
+    <circle cx="100" cy="100" r="88" fill="none" stroke="url(#darkEdge)" stroke-width="44"/>
+    <!-- O main body -->
+    <circle cx="100" cy="100" r="88" fill="none" stroke="url(#mainGrad)" stroke-width="38"/>
+    <!-- O highlight ring -->
+    <circle cx="100" cy="100" r="88" fill="none" stroke="url(#highlightGrad)" stroke-width="28" opacity="0.6"/>
+    <!-- O inner thin ring -->
+    <circle cx="100" cy="100" r="70" fill="none" stroke="#3A0000" stroke-width="1.5" opacity="0.5"/>
+  </g>
+
+  <!-- G Letter (overlapping with O) -->
+  <g mask="url(#gMask)">
+    <!-- G outer dark edge -->
+    <circle cx="290" cy="100" r="88" fill="none" stroke="url(#darkEdge)" stroke-width="44"/>
+    <!-- G main body circle -->
+    <circle cx="290" cy="100" r="88" fill="none" stroke="url(#mainGrad)" stroke-width="38"/>
+    <!-- G highlight ring -->
+    <circle cx="290" cy="100" r="88" fill="none" stroke="url(#highlightGrad)" stroke-width="28" opacity="0.6"/>
+  </g>
+
+  <!-- G horizontal bar (center bar of G) -->
+  <g>
+    <!-- Bar shadow -->
+    <rect x="255" y="88" width="80" height="28" rx="2" fill="url(#darkEdge)"/>
+    <!-- Bar main -->
+    <rect x="255" y="90" width="80" height="24" rx="2" fill="url(#mainGrad)"/>
+    <!-- Bar highlight -->
+    <rect x="255" y="92" width="80" height="18" rx="2" fill="url(#highlightGrad)" opacity="0.5"/>
+  </g>
+</svg>
