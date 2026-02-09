@@ -44,10 +44,18 @@ export default function Dashboard() {
   useEffect(() => {
     const savedAccounts = localStorage.getItem("ogu_accounts");
     if (savedAccounts) {
-      setAccounts(JSON.parse(savedAccounts));
-    } else {
-      // Default accounts
-      const defaultAccounts: Account[] = [
+      try {
+        const parsed = JSON.parse(savedAccounts);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setAccounts(parsed);
+          return;
+        }
+      } catch (e) {
+        console.error("Error parsing saved accounts:", e);
+      }
+    }
+    // Default accounts only if no saved accounts exist
+    const defaultAccounts: Account[] = [
         { 
           id: 1, 
           username: "premium", 
@@ -165,26 +173,28 @@ export default function Dashboard() {
       return;
     }
 
-    const account: Account = {
-      id: accounts.length > 0 ? Math.max(...accounts.map(a => a.id)) + 1 : 1,
-      username: newAccount.username,
-      description: newAccount.description || undefined,
-      reputation: parseInt(newAccount.reputation),
-      vouches: parseInt(newAccount.vouches),
-      price: newAccount.price.startsWith("$") ? newAccount.price : `$${newAccount.price}`,
-      hidden: newAccount.hidden,
-      customFields: [],
-      accountDetails: [
-        { key: "Status", value: "Available for Purchase" },
-        { key: "Account Type", value: "Premium OGU Account" },
-        { key: "Transfer Method", value: "Email & Password" },
-        { key: "Delivery Time", value: "Within 24 hours" },
-      ],
-    };
+    setAccounts((prevAccounts) => {
+      const account: Account = {
+        id: prevAccounts.length > 0 ? Math.max(...prevAccounts.map(a => a.id)) + 1 : 1,
+        username: newAccount.username,
+        description: newAccount.description || undefined,
+        reputation: parseInt(newAccount.reputation),
+        vouches: parseInt(newAccount.vouches),
+        price: newAccount.price.startsWith("$") ? newAccount.price : `$${newAccount.price}`,
+        hidden: newAccount.hidden,
+        customFields: [],
+        accountDetails: [
+          { key: "Status", value: "Available for Purchase" },
+          { key: "Account Type", value: "Premium OGU Account" },
+          { key: "Transfer Method", value: "Email & Password" },
+          { key: "Delivery Time", value: "Within 24 hours" },
+        ],
+      };
 
-    const updatedAccounts = [...accounts, account];
-    setAccounts(updatedAccounts);
-    localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+      const updatedAccounts = [...prevAccounts, account];
+      localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+      return updatedAccounts;
+    });
     
     setNewAccount({ username: "", description: "", reputation: "", vouches: "", price: "", hidden: false });
     setError("");
@@ -198,11 +208,13 @@ export default function Dashboard() {
     e.preventDefault();
     if (!editingAccount) return;
 
-    const updatedAccounts = accounts.map((acc) =>
-      acc.id === editingAccount.id ? editingAccount : acc
-    );
-    setAccounts(updatedAccounts);
-    localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+    setAccounts((prevAccounts) => {
+      const updatedAccounts = prevAccounts.map((acc) =>
+        acc.id === editingAccount.id ? editingAccount : acc
+      );
+      localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+      return updatedAccounts;
+    });
     setEditingAccount(null);
     setError("");
   };
@@ -218,41 +230,45 @@ export default function Dashboard() {
       return;
     }
 
-    const updatedAccounts = accounts.map((acc) => {
-      if (acc.id === accountId) {
-        const customFields = acc.customFields || [];
-        return {
-          ...acc,
-          customFields: [...customFields, { key: customFieldKey, value: customFieldValue }],
-        };
-      }
-      return acc;
+    setAccounts((prevAccounts) => {
+      const updatedAccounts = prevAccounts.map((acc) => {
+        if (acc.id === accountId) {
+          const customFields = acc.customFields || [];
+          return {
+            ...acc,
+            customFields: [...customFields, { key: customFieldKey, value: customFieldValue }],
+          };
+        }
+        return acc;
+      });
+      localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+      return updatedAccounts;
     });
-
-    setAccounts(updatedAccounts);
-    localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
     setCustomFieldKey("");
     setCustomFieldValue("");
     setError("");
   };
 
   const handleRemoveCustomField = (accountId: number, fieldKey: string) => {
-    const updatedAccounts = accounts.map((acc) => {
-      if (acc.id === accountId) {
-        const customFields = (acc.customFields || []).filter((f) => f.key !== fieldKey);
-        return { ...acc, customFields };
-      }
-      return acc;
+    setAccounts((prevAccounts) => {
+      const updatedAccounts = prevAccounts.map((acc) => {
+        if (acc.id === accountId) {
+          const customFields = (acc.customFields || []).filter((f) => f.key !== fieldKey);
+          return { ...acc, customFields };
+        }
+        return acc;
+      });
+      localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+      return updatedAccounts;
     });
-
-    setAccounts(updatedAccounts);
-    localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
   };
 
   const handleRemoveAccount = (id: number) => {
-    const updatedAccounts = accounts.filter((account) => account.id !== id);
-    setAccounts(updatedAccounts);
-    localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+    setAccounts((prevAccounts) => {
+      const updatedAccounts = prevAccounts.filter((account) => account.id !== id);
+      localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+      return updatedAccounts;
+    });
   };
 
   // Sparkle data for the animated dots - same as homepage
