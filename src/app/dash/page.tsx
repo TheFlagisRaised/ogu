@@ -53,9 +53,9 @@ export default function Dashboard() {
       } catch (e) {
         console.error("Error parsing saved accounts:", e);
       }
-    }
-    // Default accounts only if no saved accounts exist
-    const defaultAccounts: Account[] = [
+    } else {
+      // Default accounts only if no saved accounts exist
+      const defaultAccounts: Account[] = [
         { 
           id: 1, 
           username: "premium", 
