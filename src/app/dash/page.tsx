@@ -40,104 +40,23 @@ export default function Dashboard() {
   const [customFieldKey, setCustomFieldKey] = useState("");
   const [customFieldValue, setCustomFieldValue] = useState("");
 
-  // Load accounts from localStorage on mount
+  // Load accounts from API on mount
   useEffect(() => {
-    const savedAccounts = localStorage.getItem("ogu_accounts");
-    if (savedAccounts) {
+    const fetchAccounts = async () => {
       try {
-        const parsed = JSON.parse(savedAccounts);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setAccounts(parsed);
-          return;
+        const response = await fetch("/api/accounts");
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setAccounts(data);
+            return;
+          }
         }
       } catch (e) {
-        console.error("Error parsing saved accounts:", e);
+        console.error("Error fetching accounts:", e);
       }
-    } else {
-      // Default accounts only if no saved accounts exist
-      const defaultAccounts: Account[] = [
-        { 
-          id: 1, 
-          username: "premium", 
-          reputation: 1250, 
-          vouches: 89, 
-          price: "$2,500",
-          accountDetails: [
-            { key: "Status", value: "Available for Purchase" },
-            { key: "Account Type", value: "Premium OGU Account" },
-            { key: "Transfer Method", value: "Email & Password" },
-            { key: "Delivery Time", value: "Within 24 hours" },
-          ],
-        },
-        { 
-          id: 2, 
-          username: "elite", 
-          reputation: 980, 
-          vouches: 67, 
-          price: "$1,800",
-          accountDetails: [
-            { key: "Status", value: "Available for Purchase" },
-            { key: "Account Type", value: "Premium OGU Account" },
-            { key: "Transfer Method", value: "Email & Password" },
-            { key: "Delivery Time", value: "Within 24 hours" },
-          ],
-        },
-        { 
-          id: 3, 
-          username: "vip", 
-          reputation: 2100, 
-          vouches: 145, 
-          price: "$3,200",
-          accountDetails: [
-            { key: "Status", value: "Available for Purchase" },
-            { key: "Account Type", value: "Premium OGU Account" },
-            { key: "Transfer Method", value: "Email & Password" },
-            { key: "Delivery Time", value: "Within 24 hours" },
-          ],
-        },
-        { 
-          id: 4, 
-          username: "exclusive", 
-          reputation: 750, 
-          vouches: 42, 
-          price: "$1,200",
-          accountDetails: [
-            { key: "Status", value: "Available for Purchase" },
-            { key: "Account Type", value: "Premium OGU Account" },
-            { key: "Transfer Method", value: "Email & Password" },
-            { key: "Delivery Time", value: "Within 24 hours" },
-          ],
-        },
-        { 
-          id: 5, 
-          username: "rare", 
-          reputation: 3200, 
-          vouches: 201, 
-          price: "$4,500",
-          accountDetails: [
-            { key: "Status", value: "Available for Purchase" },
-            { key: "Account Type", value: "Premium OGU Account" },
-            { key: "Transfer Method", value: "Email & Password" },
-            { key: "Delivery Time", value: "Within 24 hours" },
-          ],
-        },
-        { 
-          id: 6, 
-          username: "unique", 
-          reputation: 1650, 
-          vouches: 98, 
-          price: "$2,100",
-          accountDetails: [
-            { key: "Status", value: "Available for Purchase" },
-            { key: "Account Type", value: "Premium OGU Account" },
-            { key: "Transfer Method", value: "Email & Password" },
-            { key: "Delivery Time", value: "Within 24 hours" },
-          ],
-        },
-      ];
-      setAccounts(defaultAccounts);
-      localStorage.setItem("ogu_accounts", JSON.stringify(defaultAccounts));
-    }
+    };
+    fetchAccounts();
 
     // Check if already authenticated
     const authStatus = sessionStorage.getItem("dash_authenticated");
@@ -192,12 +111,27 @@ export default function Dashboard() {
       };
 
       const updatedAccounts = [...prevAccounts, account];
-      localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+      saveAccountsToAPI(updatedAccounts);
       return updatedAccounts;
     });
     
     setNewAccount({ username: "", description: "", reputation: "", vouches: "", price: "", hidden: false });
     setError("");
+  };
+
+  const saveAccountsToAPI = async (accountsToSave: Account[]) => {
+    try {
+      await fetch("/api/accounts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accounts: accountsToSave,
+          authToken: "bevo_auth_token_9009",
+        }),
+      });
+    } catch (e) {
+      console.error("Error saving accounts:", e);
+    }
   };
 
   const handleEditAccount = (account: Account) => {
@@ -212,7 +146,7 @@ export default function Dashboard() {
       const updatedAccounts = prevAccounts.map((acc) =>
         acc.id === editingAccount.id ? editingAccount : acc
       );
-      localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+      saveAccountsToAPI(updatedAccounts);
       return updatedAccounts;
     });
     setEditingAccount(null);
@@ -241,7 +175,7 @@ export default function Dashboard() {
         }
         return acc;
       });
-      localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+      saveAccountsToAPI(updatedAccounts);
       return updatedAccounts;
     });
     setCustomFieldKey("");
@@ -258,7 +192,7 @@ export default function Dashboard() {
         }
         return acc;
       });
-      localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+      saveAccountsToAPI(updatedAccounts);
       return updatedAccounts;
     });
   };
@@ -266,7 +200,7 @@ export default function Dashboard() {
   const handleRemoveAccount = (id: number) => {
     setAccounts((prevAccounts) => {
       const updatedAccounts = prevAccounts.filter((account) => account.id !== id);
-      localStorage.setItem("ogu_accounts", JSON.stringify(updatedAccounts));
+      saveAccountsToAPI(updatedAccounts);
       return updatedAccounts;
     });
   };

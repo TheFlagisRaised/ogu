@@ -101,41 +101,27 @@ export default function Shop() {
   const [expandedAccount, setExpandedAccount] = useState<number | null>(null);
   const [accounts, setAccounts] = useState<Account[]>(defaultAccounts);
 
-  // Load accounts from localStorage
+  // Load accounts from API
   useEffect(() => {
-    const savedAccounts = localStorage.getItem("ogu_accounts");
-    if (savedAccounts) {
+    const fetchAccounts = async () => {
       try {
-        const parsed = JSON.parse(savedAccounts);
-        setAccounts(parsed);
+        const response = await fetch("/api/accounts");
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data)) {
+            setAccounts(data);
+          }
+        }
       } catch (e) {
         console.error("Error loading accounts:", e);
       }
-    }
-  }, []);
-
-  // Listen for storage changes to sync accounts
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const savedAccounts = localStorage.getItem("ogu_accounts");
-      if (savedAccounts) {
-        try {
-          const parsed = JSON.parse(savedAccounts);
-          setAccounts(parsed);
-        } catch (e) {
-          console.error("Error loading accounts:", e);
-        }
-      }
     };
 
-    window.addEventListener("storage", handleStorageChange);
-    // Also check periodically for same-tab updates
-    const interval = setInterval(handleStorageChange, 500);
+    fetchAccounts();
+    // Refresh accounts every 2 seconds to get updates
+    const interval = setInterval(fetchAccounts, 2000);
 
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   const categories = ["All"];
