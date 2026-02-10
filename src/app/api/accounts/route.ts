@@ -9,8 +9,8 @@ interface Account {
   id: number;
   username: string;
   description?: string;
-  reputation: number;
-  vouches: number;
+  reputation: number | string;
+  vouches: number | string;
   price: string;
   hidden?: boolean;
   customFields?: CustomField[];

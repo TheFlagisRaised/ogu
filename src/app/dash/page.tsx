@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import TextWithGlyphs from "../components/TextWithGlyphs";
 
 const USERNAME = "bevo";
 const PASSWORD = "bevo9009";
@@ -14,8 +15,8 @@ interface Account {
   id: number;
   username: string;
   description?: string;
-  reputation: number;
-  vouches: number;
+  reputation: number | string;
+  vouches: number | string;
   price: string;
   hidden?: boolean;
   customFields?: CustomField[];
@@ -97,8 +98,8 @@ export default function Dashboard() {
         id: prevAccounts.length > 0 ? Math.max(...prevAccounts.map(a => a.id)) + 1 : 1,
         username: newAccount.username,
         description: newAccount.description || undefined,
-        reputation: parseInt(newAccount.reputation),
-        vouches: parseInt(newAccount.vouches),
+        reputation: newAccount.reputation,
+        vouches: newAccount.vouches,
         price: newAccount.price.startsWith("$") ? newAccount.price : `$${newAccount.price}`,
         hidden: newAccount.hidden,
         customFields: [],
@@ -342,7 +343,7 @@ export default function Dashboard() {
                   required
                 />
                 <input
-                  type="number"
+                  type="text"
                   value={newAccount.reputation}
                   onChange={(e) => setNewAccount({ ...newAccount, reputation: e.target.value })}
                   className="px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-white/20 transition-all"
@@ -350,7 +351,7 @@ export default function Dashboard() {
                   required
                 />
                 <input
-                  type="number"
+                  type="text"
                   value={newAccount.vouches}
                   onChange={(e) => setNewAccount({ ...newAccount, vouches: e.target.value })}
                   className="px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-white/20 transition-all"
@@ -426,17 +427,17 @@ export default function Dashboard() {
                           required
                         />
                         <input
-                          type="number"
+                          type="text"
                           value={editingAccount.reputation}
-                          onChange={(e) => setEditingAccount({ ...editingAccount, reputation: parseInt(e.target.value) || 0 })}
+                          onChange={(e) => setEditingAccount({ ...editingAccount, reputation: e.target.value })}
                           className="px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-white/20 transition-all"
                           placeholder="Reputation"
                           required
                         />
                         <input
-                          type="number"
+                          type="text"
                           value={editingAccount.vouches}
-                          onChange={(e) => setEditingAccount({ ...editingAccount, vouches: parseInt(e.target.value) || 0 })}
+                          onChange={(e) => setEditingAccount({ ...editingAccount, vouches: e.target.value })}
                           className="px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-white/20 transition-all"
                           placeholder="Vouches"
                           required
@@ -609,19 +610,19 @@ export default function Dashboard() {
                           <div>
                             <p className="text-sm text-gray-400">Reputation</p>
                             <p className="text-base font-semibold" style={{ color: "#cc5252" }}>
-                              {account.reputation}
+                              <TextWithGlyphs text={account.reputation} />
                             </p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-400">Vouches</p>
                             <p className="text-base font-semibold" style={{ color: "#cc5252" }}>
-                              {account.vouches}
+                              <TextWithGlyphs text={account.vouches} />
                             </p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-400">Price</p>
                             <p className="text-base font-semibold" style={{ color: "#cc5252" }}>
-                              {account.price}
+                              <TextWithGlyphs text={account.price} />
                             </p>
                           </div>
                         </div>
@@ -649,8 +650,8 @@ export default function Dashboard() {
                           <div className="flex flex-wrap gap-2">
                             {account.customFields.map((field, idx) => (
                               <div key={idx} className="text-xs">
-                                <span className="text-gray-400">{field.key}:</span>{" "}
-                                <span className="text-gray-300">{field.value}</span>
+                                <span className="text-gray-400"><TextWithGlyphs text={field.key} />:</span>{" "}
+                                <span className="text-gray-300"><TextWithGlyphs text={field.value} /></span>
                               </div>
                             ))}
                           </div>

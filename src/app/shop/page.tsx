@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import ShiftingGlyphs from "../components/ShiftingGlyphs";
+import TextWithGlyphs from "../components/TextWithGlyphs";
 
 interface CustomField {
   key: string;
@@ -13,8 +14,8 @@ interface Account {
   id: number;
   username: string;
   description?: string;
-  reputation: number;
-  vouches: number;
+  reputation: number | string;
+  vouches: number | string;
   price: string;
   hidden?: boolean;
   customFields?: CustomField[];
@@ -256,7 +257,7 @@ export default function Shop() {
 
                 {/* Username */}
                 <h3 className="text-lg font-semibold mb-6 text-gray-300">
-                  {account.hidden ? <ShiftingGlyphs length={8} /> : account.username}
+                  {account.hidden ? <ShiftingGlyphs length={8} /> : <TextWithGlyphs text={account.username} />}
                 </h3>
 
                 {/* Stats */}
@@ -264,13 +265,13 @@ export default function Shop() {
                   <div className="text-center">
                     <p className="text-sm text-gray-500 mb-1">Reputation</p>
                     <p className="text-base font-semibold" style={{ color: "#cc5252" }}>
-                      {account.reputation}
+                      <TextWithGlyphs text={account.reputation} />
                     </p>
                   </div>
                   <div className="text-center">
                     <p className="text-sm text-gray-500 mb-1">Vouches</p>
                     <p className="text-base font-semibold" style={{ color: "#cc5252" }}>
-                      {account.vouches}
+                      <TextWithGlyphs text={account.vouches} />
                     </p>
                   </div>
                 </div>
@@ -281,7 +282,7 @@ export default function Shop() {
                     <div className="space-y-2 text-left">
                       <div>
                         <p className="text-xs text-gray-500">Account ID</p>
-                        <p className="text-sm text-gray-300">#{account.id}</p>
+                        <p className="text-sm text-gray-300">#<TextWithGlyphs text={account.id} /></p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Status</p>
@@ -304,7 +305,7 @@ export default function Shop() {
                   <div className="mb-4">
                     <p className="text-xs text-gray-500 mb-1">Price</p>
                     <p className="text-2xl font-bold" style={{ color: "#cc5252" }}>
-                      {account.price}
+                      <TextWithGlyphs text={account.price} />
                     </p>
                   </div>
                   <button
@@ -366,7 +367,7 @@ export default function Shop() {
                     />
                   </div>
                   <h2 className="text-2xl font-bold mb-2" style={{ color: "#cc5252" }}>
-                    {account.hidden ? <ShiftingGlyphs length={8} /> : account.username}
+                    {account.hidden ? <ShiftingGlyphs length={8} /> : <TextWithGlyphs text={account.username} />}
                   </h2>
                   <p className="text-sm text-gray-400">Account #{account.id}</p>
                 </div>
@@ -379,13 +380,13 @@ export default function Shop() {
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-500">Reputation</span>
                         <span className="text-base font-semibold" style={{ color: "#cc5252" }}>
-                          {account.reputation}
+                          <TextWithGlyphs text={account.reputation} />
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-500">Vouches</span>
                         <span className="text-base font-semibold" style={{ color: "#cc5252" }}>
-                          {account.vouches}
+                          <TextWithGlyphs text={account.vouches} />
                         </span>
                       </div>
                     </div>
@@ -420,7 +421,7 @@ export default function Shop() {
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-500">Price</span>
                         <span className="text-2xl font-bold" style={{ color: "#cc5252" }}>
-                          {account.price}
+                          <TextWithGlyphs text={account.price} />
                         </span>
                       </div>
                     </div>
